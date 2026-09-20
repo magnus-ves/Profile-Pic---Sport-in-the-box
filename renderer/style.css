@@ -1,5 +1,5 @@
 :root {
-  --bg: #f4f6f8;
+  --bg: #3f6d8f;
   --panel-bg: #ffffff;
   --text: #1b1f24;
   --text-muted: #5c6672;
@@ -160,7 +160,7 @@ html, body {
 .content { flex: 1; overflow-y: auto; padding: 20px; display: none; }
 .tab-panel.active { display: block; }
 
-.camera-panel { max-width: 1200px; margin: 0 auto; }
+.camera-panel { max-width: 1200px; margin: 0 auto; color: #fff; }
 
 .camera-toolbar {
   display: flex;
@@ -233,7 +233,7 @@ html, body {
   gap: 10px;
 }
 
-.preview-stage h3 { margin: 0; font-size: 14px; color: var(--text-muted); }
+.preview-stage h3 { margin: 0; font-size: 14px; color: rgba(255, 255, 255, 0.85); }
 
 #preview-canvas {
   width: 320px;
@@ -253,7 +253,7 @@ html, body {
   text-align: center;
 }
 #selected-athlete-name { font-weight: 700; font-size: 15px; }
-.filename-preview { font-family: monospace; font-size: 13px; color: var(--text-muted); }
+.filename-preview { font-family: monospace; font-size: 13px; color: rgba(255, 255, 255, 0.75); }
 
 .warning {
   background: var(--warning-bg);
@@ -277,6 +277,8 @@ html, body {
 .btn:hover { background: var(--pill-bg); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
 .btn.primary:hover { background: var(--accent-hover); }
+.preview-stage .btn.primary { background: #fff; border-color: #fff; color: var(--accent); }
+.preview-stage .btn.primary:hover { background: var(--pill-bg); }
 .btn.danger { background: var(--danger); border-color: var(--danger); color: white; }
 .btn.small { padding: 6px 10px; font-size: 13px; }
 .btn.big { padding: 16px 30px; font-size: 16px; font-weight: 700; }
@@ -297,6 +299,7 @@ html, body {
   gap: 16px;
 }
 .hint { font-size: 12px; color: var(--text-muted); }
+.crop-controls .hint { color: rgba(255, 255, 255, 0.75); }
 
 .chroma-controls {
   margin-top: 20px;
@@ -304,6 +307,7 @@ html, body {
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--panel-bg);
+  color: var(--text);
 }
 .chroma-controls h3 { margin-top: 0; font-size: 14px; }
 .chroma-row {
@@ -320,12 +324,14 @@ html, body {
   display: inline-block;
 }
 
-.settings-panel { max-width: 700px; }
+.settings-panel { max-width: 700px; color: #fff; }
 .settings-panel fieldset {
   border: 1px solid var(--border);
   border-radius: 10px;
   margin-bottom: 16px;
   padding: 14px 18px;
+  background: var(--panel-bg);
+  color: var(--text);
 }
 .settings-panel legend { font-weight: 700; padding: 0 6px; }
 .settings-panel label { display: block; margin: 8px 0; }
