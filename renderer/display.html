@@ -18,9 +18,40 @@
     position: relative;
     width: 100vw;
     height: 100vh;
+    background: #000;
+  }
+
+  #live-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #idle-msg {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #666;
+    font-size: 22px;
+    text-align: center;
+    padding: 0 10vw;
+  }
+
+  #captured-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.94);
+    max-width: 88vw;
+    max-height: 84vh;
+    object-fit: contain;
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.6);
     background:
       linear-gradient(45deg, #1a1a1a 25%, transparent 25%),
       linear-gradient(-45deg, #1a1a1a 25%, transparent 25%),
@@ -28,34 +59,10 @@
       linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
     background-size: 40px 40px;
     background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
-    background-color: #000;
-  }
-
-  #live-frame, #captured-frame {
-    max-width: 92vw;
-    max-height: 88vh;
-    object-fit: contain;
-    border-radius: 12px;
-  }
-
-  #captured-frame {
-    position: absolute;
-    opacity: 0;
-    transform: scale(0.94);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.6);
   }
   #captured-frame.show {
     opacity: 1;
-    transform: scale(1);
-  }
-
-  #idle-msg {
-    position: absolute;
-    color: #666;
-    font-size: 22px;
-    text-align: center;
-    max-width: 60vw;
+    transform: translate(-50%, -50%) scale(1);
   }
 
   #name-banner {
@@ -72,6 +79,7 @@
     opacity: 0;
     transition: opacity 0.25s ease, transform 0.25s ease;
     white-space: nowrap;
+    z-index: 5;
   }
   #name-banner.show {
     opacity: 1;
@@ -90,6 +98,7 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     font-weight: 600;
+    z-index: 5;
   }
   #live-label .dot {
     width: 9px; height: 9px;
@@ -104,13 +113,14 @@
     right: 22px;
     color: rgba(255,255,255,0.3);
     font-size: 12px;
+    z-index: 5;
   }
 </style>
 </head>
 <body>
   <div id="stage">
     <div id="idle-msg">Venter på kameraforhåndsvisning fra Bassengfoto…</div>
-    <img id="live-frame" hidden />
+    <canvas id="live-canvas" hidden></canvas>
     <img id="captured-frame" />
     <div id="live-label"><span class="dot"></span> Live</div>
     <div id="name-banner"></div>

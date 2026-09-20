@@ -709,6 +709,29 @@ async function loadReplaceImage(filePath) {
 }
 
 // ---------------------------------------------------------------------------
+// Fullt kamerabilde til visningsskjermen (uklippet, opptil 1920x1080)
+// ---------------------------------------------------------------------------
+let fullFrameCanvasEl = null;
+
+function captureFullFrameCanvas(video) {
+  if (!video.videoWidth || !video.videoHeight) return null;
+  const maxW = 1920;
+  const maxH = 1080;
+  const scale = Math.min(1, maxW / video.videoWidth, maxH / video.videoHeight);
+  const w = Math.round(video.videoWidth * scale);
+  const h = Math.round(video.videoHeight * scale);
+
+  if (!fullFrameCanvasEl) fullFrameCanvasEl = document.createElement('canvas');
+  if (fullFrameCanvasEl.width !== w || fullFrameCanvasEl.height !== h) {
+    fullFrameCanvasEl.width = w;
+    fullFrameCanvasEl.height = h;
+  }
+  const ctx = fullFrameCanvasEl.getContext('2d');
+  ctx.drawImage(video, 0, 0, w, h);
+  return fullFrameCanvasEl;
+}
+
+// ---------------------------------------------------------------------------
 // Preview render loop
 // ---------------------------------------------------------------------------
 function renderPreviewFrame() {
@@ -740,9 +763,15 @@ function renderPreviewFrame() {
     }
 
     const now = performance.now();
-    if (now - state.lastDisplayFrameSentAt > 120) {
+    if (now - state.lastDisplayFrameSentAt > 150) {
       state.lastDisplayFrameSentAt = now;
-      window.bassengfoto.display.sendFrame(canvas.toDataURL('image/jpeg', 0.72));
+      const fullFrameCanvas = captureFullFrameCanvas(video);
+      if (fullFrameCanvas) {
+        window.bassengfoto.display.sendFrame({
+          dataUrl: fullFrameCanvas.toDataURL('image/jpeg', 0.75),
+          crop: { cx: state.crop.cx, cy: state.crop.cy, size: state.crop.size }
+        });
+      }
     }
   }
 
