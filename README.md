@@ -25,6 +25,12 @@ mobil nødvendig.
 - **Lagring** — velg output-mappe én gang, og appen skriver PNG-filer
   (600–800 px, transparent hvis grønnskjerm er aktiv) direkte til mappen med
   Node.js `fs`. Appen varsler før en eksisterende fil overskrives.
+- **Visningsskjerm** — åpne et eget vindu ("🖥️ Åpne visningsskjerm") som kan
+  dras over til en ekstern skjerm/TV ved bassenget. Vinduet viser
+  kameraforhåndsvisningen live (med grønnskjerm-effekt om aktivert), og
+  blinker opp det ferdige bildet med utøverens navn i noen sekunder rett
+  etter at det er tatt — slik at utøveren/publikum kan se hvordan bildet
+  blir. Dobbeltklikk i vinduet for fullskjerm.
 - **Design** — norsk brukergrensesnitt, lys/mørk modus, store knapper og
   tydelig status tilpasset bruk under et stevne.
 

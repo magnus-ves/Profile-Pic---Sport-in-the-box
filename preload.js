@@ -23,5 +23,13 @@ contextBridge.exposeInMainWorld('bassengfoto', {
   },
   shell: {
     openFolder: (folderPath) => ipcRenderer.invoke('shell:openFolder', folderPath)
+  },
+  display: {
+    open: () => ipcRenderer.invoke('display:open'),
+    isOpen: () => ipcRenderer.invoke('display:isOpen'),
+    sendFrame: (dataUrl) => ipcRenderer.send('display:frame', dataUrl),
+    sendCaptured: (payload) => ipcRenderer.send('display:captured', payload),
+    onFrame: (callback) => ipcRenderer.on('display:frame', (_event, dataUrl) => callback(dataUrl)),
+    onCaptured: (callback) => ipcRenderer.on('display:captured', (_event, payload) => callback(payload))
   }
 });

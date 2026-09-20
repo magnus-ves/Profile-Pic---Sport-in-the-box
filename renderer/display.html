@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+<title>Bassengfoto — Visningsskjerm</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  #stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(45deg, #1a1a1a 25%, transparent 25%),
+      linear-gradient(-45deg, #1a1a1a 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #1a1a1a 75%),
+      linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+    background-size: 40px 40px;
+    background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+    background-color: #000;
+  }
+
+  #live-frame, #captured-frame {
+    max-width: 92vw;
+    max-height: 88vh;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+
+  #captured-frame {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.6);
+  }
+  #captured-frame.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  #idle-msg {
+    position: absolute;
+    color: #666;
+    font-size: 22px;
+    text-align: center;
+    max-width: 60vw;
+  }
+
+  #name-banner {
+    position: absolute;
+    bottom: 6vh;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: rgba(15, 143, 92, 0.92);
+    color: #fff;
+    font-size: clamp(22px, 3.4vw, 44px);
+    font-weight: 700;
+    padding: 14px 36px;
+    border-radius: 999px;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    white-space: nowrap;
+  }
+  #name-banner.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  #live-label {
+    position: absolute;
+    top: 22px;
+    left: 26px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  #live-label .dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #2ecc71;
+    box-shadow: 0 0 8px #2ecc71;
+  }
+
+  #fullscreen-hint {
+    position: absolute;
+    bottom: 18px;
+    right: 22px;
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <div id="idle-msg">Venter på kameraforhåndsvisning fra Bassengfoto…</div>
+    <img id="live-frame" hidden />
+    <img id="captured-frame" />
+    <div id="live-label"><span class="dot"></span> Live</div>
+    <div id="name-banner"></div>
+    <div id="fullscreen-hint">Dobbeltklikk for fullskjerm</div>
+  </div>
+  <script src="display.js"></script>
+</body>
+</html>

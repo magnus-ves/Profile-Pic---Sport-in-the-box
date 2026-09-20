@@ -16,7 +16,8 @@ const state = {
   dragging: false,
   dragStart: null,
   replaceImageEl: null,
-  animationHandle: null
+  animationHandle: null,
+  lastDisplayFrameSentAt: 0
 };
 
 const FILENAME_FORMATS = {
@@ -737,6 +738,12 @@ function renderPreviewFrame() {
       applyChromaKey(imageData);
       ctx.putImageData(imageData, 0, 0);
     }
+
+    const now = performance.now();
+    if (now - state.lastDisplayFrameSentAt > 120) {
+      state.lastDisplayFrameSentAt = now;
+      window.bassengfoto.display.sendFrame(canvas.toDataURL('image/jpeg', 0.72));
+    }
   }
 
   drawCropOverlay();
@@ -780,6 +787,10 @@ async function captureAndSave() {
       await saveAthletes();
       renderAthleteList();
       showSaveConfirmation(`✔ Lagret: ${fileName}`, false);
+      window.bassengfoto.display.sendCaptured({
+        dataUrl: canvas.toDataURL('image/png'),
+        athleteName: athlete.name
+      });
     } else {
       showSaveConfirmation(`✖ Feil: ${result.error}`, true);
     }
@@ -833,6 +844,15 @@ function initCapture() {
 }
 
 // ---------------------------------------------------------------------------
+// Visningsskjerm (eksternt vindu for eksternt display)
+// ---------------------------------------------------------------------------
+function initDisplayWindowButton() {
+  document.getElementById('btn-open-display').addEventListener('click', () => {
+    window.bassengfoto.display.open();
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
 async function init() {
@@ -847,6 +867,7 @@ async function init() {
   initCropInteraction();
   initChromaControls();
   initCapture();
+  initDisplayWindowButton();
   renderAthleteList();
   updateFilenamePreview();
 

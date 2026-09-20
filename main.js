@@ -45,6 +45,31 @@ function writeJsonSafe(filePath, data) {
 }
 
 let mainWindow;
+let displayWindow = null;
+
+function createDisplayWindow() {
+  if (displayWindow && !displayWindow.isDestroyed()) {
+    displayWindow.focus();
+    return;
+  }
+  displayWindow = new BrowserWindow({
+    width: 900,
+    height: 900,
+    title: 'Bassengfoto — Visningsskjerm',
+    backgroundColor: '#000000',
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: false
+    }
+  });
+  displayWindow.setMenuBarVisibility(false);
+  displayWindow.loadFile(path.join(__dirname, 'renderer', 'display.html'));
+  displayWindow.on('closed', () => {
+    displayWindow = null;
+  });
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -171,4 +196,26 @@ ipcMain.handle('image:save', (event, { fileName, buffer }) => {
 
 ipcMain.handle('shell:openFolder', (event, folderPath) => {
   if (folderPath) shell.openPath(folderPath);
+});
+
+// ---------- IPC: Display window (extern skjerm ved bassenget) ----------
+ipcMain.handle('display:open', () => {
+  createDisplayWindow();
+  return true;
+});
+
+ipcMain.handle('display:isOpen', () => {
+  return !!(displayWindow && !displayWindow.isDestroyed());
+});
+
+ipcMain.on('display:frame', (event, dataUrl) => {
+  if (displayWindow && !displayWindow.isDestroyed()) {
+    displayWindow.webContents.send('display:frame', dataUrl);
+  }
+});
+
+ipcMain.on('display:captured', (event, payload) => {
+  if (displayWindow && !displayWindow.isDestroyed()) {
+    displayWindow.webContents.send('display:captured', payload);
+  }
 });
