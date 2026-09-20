@@ -6,6 +6,9 @@ on:
     tags: ['v*']
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -37,3 +40,25 @@ jobs:
             dist/*.exe
             dist/*.dmg
           if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: installers
+          merge-multiple: true
+
+      - name: Publiser/oppdater "latest"-utgivelsen med installasjonsfilene
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Bassengfoto (siste bygg)
+          body: |
+            Automatisk bygg av Bassengfoto fra branch `${{ github.ref_name }}`.
+            Last ned `.exe` (Windows) eller `.dmg` (Mac) under.
+          make_latest: true
+          files: installers/*
