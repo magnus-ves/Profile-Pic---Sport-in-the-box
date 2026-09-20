@@ -168,30 +168,57 @@ function renderAthleteList() {
     li.className = 'athlete-item' + (athlete.id === state.selectedAthleteId ? ' selected' : '');
     li.dataset.id = athlete.id;
 
+    const avatar = document.createElement('div');
+    avatar.className = 'athlete-avatar';
+    avatar.textContent = initialsFor(athlete.name);
+    avatar.style.background = colorFor(athlete.name || athlete.id);
+
+    const info = document.createElement('div');
+    info.className = 'athlete-info';
+
+    const topRow = document.createElement('div');
+    topRow.className = 'athlete-top-row';
     const name = document.createElement('div');
     name.className = 'athlete-name';
     name.textContent = athlete.name || '(uten navn)';
+    const dot = document.createElement('span');
+    dot.className = 'status-dot' + (athlete.photographed ? ' done' : '');
+    topRow.append(name, dot);
 
     const sub = document.createElement('div');
     sub.className = 'athlete-sub';
     sub.textContent = [athlete.country, athlete.club].filter(Boolean).join(' · ');
 
-    const statusRow = document.createElement('div');
-    statusRow.className = 'status-row';
-    const dot = document.createElement('span');
-    dot.className = 'status-dot' + (athlete.photographed ? ' done' : '');
-    const statusText = document.createElement('span');
+    const statusText = document.createElement('div');
+    statusText.className = 'athlete-status-text';
     statusText.textContent = athlete.photographed
       ? `Fotografert ${new Date(athlete.lastPhotoAt).toLocaleTimeString('no-NO')}`
       : 'Ikke fotografert';
-    statusRow.append(dot, statusText);
 
-    li.append(name, sub, statusRow);
+    info.append(topRow, sub, statusText);
+    li.append(avatar, info);
     li.addEventListener('click', () => selectAthlete(athlete.id));
     list.appendChild(li);
   }
 
   document.getElementById('athlete-count').textContent = `${filtered.length} av ${state.athletes.length} utøvere`;
+}
+
+function initialsFor(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0]?.[0] || '';
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (first + last).toUpperCase();
+}
+
+function colorFor(seed) {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 42%, 46%)`;
 }
 
 function selectAthlete(id) {
