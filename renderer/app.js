@@ -11,7 +11,7 @@ const state = {
   onlyNotPhotographed: false,
   videoDevices: [],
   stream: null,
-  crop: { cx: 0.5, cy: 0.5, size: 0.6 }, // relative to displayed video rect (0..1)
+  crop: { cx: 0.5, cy: 0.5, size: 1.0 }, // relative to displayed video rect (0..1); 1.0 = full height square
   zoom: 100,
   dragging: false,
   dragStart: null,
@@ -570,7 +570,7 @@ function initCropInteraction() {
 
   document.getElementById('zoom-slider').addEventListener('input', (e) => {
     state.zoom = parseInt(e.target.value, 10);
-    state.crop.size = clamp(0.9 * (100 / state.zoom), 0.15, 0.95);
+    state.crop.size = clamp(100 / state.zoom, 0.15, 1.0);
     drawCropOverlay();
   });
 
