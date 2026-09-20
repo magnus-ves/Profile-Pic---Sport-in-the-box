@@ -20,6 +20,7 @@
   "build": {
     "appId": "no.bassengfoto.app",
     "productName": "Bassengfoto",
+    "publish": null,
     "files": [
       "main.js",
       "preload.js",
