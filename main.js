@@ -21,7 +21,7 @@ const DEFAULT_SETTINGS = {
     replaceImagePath: null
   },
   imageSize: 700,
-  displayOverlayImagePath: null
+  displayOverlayImagePath: path.join(__dirname, 'renderer', 'assets', 'idle-overlay.png')
 };
 
 function ensureUserDataDir() {
