@@ -79,6 +79,77 @@ Ferdige installasjonsfiler havner i `dist/`-mappen.
    om filen ville overskrive en eksisterende, og bekrefter når bildet er
    lagret.
 
+## To PC-er: sette opp en delt nettverksmappe
+
+Bassengfoto er laget for å kjøre på **samme PC** som Sport In The Box (SITB),
+med output-mappen lagret lokalt på den maskinen — det er den anbefalte og mest
+driftssikre løsningen (ingen nettverksavhengighet under stevnet).
+
+Hvis fotostasjonen likevel må stå på en **annen PC** enn den som kjører SITB,
+kan du dele output-mappen over nettverket (SMB). Sett opp delingen **på
+forhånd**, ikke under stevnet, og test at bilder faktisk dukker opp i SITB før
+konkurransen starter.
+
+### 1. Del ut mappen på PC-en som kjører SITB ("server")
+
+**Windows:**
+1. Høyreklikk mappen SITB leser bilder fra → **Egenskaper** → fanen **Deling**
+   → **Avansert deling...**
+2. Kryss av **Del denne mappen**, gi den et enkelt navn (f.eks. `SITB-bilder`),
+   og trykk **Tillatelser** → gi brukeren/gruppen som fotostasjonen skal
+   koble til **Full kontroll** (les/skriv), siden Bassengfoto skal skrive
+   filer inn i mappen.
+3. Under fanen **Sikkerhet**, kontroller at samme bruker/gruppe har
+   Endre/Skriv-rettigheter på selve filsystemnivået (ikke bare delingsnivået).
+4. Noter maskinnavnet eller den lokale IP-adressen (`ipconfig` i en
+   kommandolinje), f.eks. `\\SITB-PC\SITB-bilder` eller `\\192.168.1.50\SITB-bilder`.
+5. Sørg for at Windows-brannmuren tillater "Fil- og skriverdeling" på det
+   nettverket dere bruker (helst et eget, lukket stevne-nettverk/switch —
+   ikke åpent wifi).
+
+**Mac:**
+1. **Systeminnstillinger → Generelt → Deling** (eller **Deling** i eldre
+   macOS) → skru på **Fildeling**.
+2. Legg til mappen under **Delte mapper**, og gi fotostasjon-brukeren
+   **Lese og skrive**-tilgang.
+3. Bruk `smb://<mac-ens-navn-eller-IP>/<mappenavn>` fra fotostasjonen.
+
+### 2. Koble til mappen fra fotostasjon-PC-en ("klient")
+
+**Windows:**
+1. Åpne Filutforsker → **Denne PC-en** → **Tilknytt nettverksstasjon**.
+2. Skriv inn stien (`\\SITB-PC\SITB-bilder`), kryss av **Koble til på nytt ved
+   pålogging**, og logg på med brukeren som har tilgang om det spørres om.
+3. Den tilkoblede stasjonen (f.eks. `Z:\`) vises nå som en vanlig mappe.
+
+**Mac:**
+1. Finder → **Gå til → Koble til server...** (⌘K).
+2. Skriv `smb://<SITB-PC-ens-navn-eller-IP>/<mappenavn>` → **Koble til** →
+   logg på.
+3. Monter gjerne stasjonen ved oppstart (Systeminnstillinger → Brukere og
+   grupper → Innloggingsobjekter) så den alltid er tilgjengelig.
+
+### 3. Pek Bassengfoto til den tilkoblede mappen
+
+I Bassengfoto → **Innstillinger** → **Velg mappe...**, naviger til den
+tilkoblede nettverksstasjonen/mappen (f.eks. `Z:\` på Windows eller den
+monterte mappen under `/Volumes/` på Mac) og velg den som output-mappe.
+
+### Ting å tenke på med nettverksdeling
+
+- **Test i god tid før stevnet.** Ta et testbilde og bekreft at det dukker
+  opp i SITB fra den andre maskinen.
+- **Stabilt, lukket nettverk.** Bruk kablet nettverk eller et dedikert
+  stevne-wifi/switch — ikke del over åpne/offentlige nett. Ustabil wifi kan
+  gi trege eller mislykkede skrivinger midt i et løp.
+- **Rettigheter.** Bassengfoto må ha skrive-tilgang til mappen; hvis lagring
+  feiler, er dette den vanligste årsaken (se feilmeldingen som vises i UI).
+- **SITB må lese fra samme sti.** Sørg for at SITB peker på den delte mappen
+  sett fra sin egen maskin (ofte den lokale stien på server-PC-en, siden SITB
+  som regel kjører på samme maskin som deler ut mappen).
+- Reserveplan: ha USB-minnepenn klar for manuell filoverføring hvis nettverket
+  skulle falle ut under stevnet.
+
 ## Teknisk
 
 - Electron + vanlig HTML/CSS/JS i rendereren (ingen tungt rammeverk).
