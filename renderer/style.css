@@ -67,13 +67,12 @@ html, body {
 }
 .platform-mac .topbar { padding-left: 84px; }
 
-.brand { font-weight: 700; font-size: 18px; }
-
 .brand-logo {
   height: 18px;
   width: auto;
   display: block;
 }
+.brand-logo-left { height: 22px; }
 .theme-dark .brand-logo { filter: brightness(1.5) saturate(1.15); }
 
 .tabs {
