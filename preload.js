@@ -5,7 +5,8 @@ contextBridge.exposeInMainWorld('bassengfoto', {
     load: () => ipcRenderer.invoke('settings:load'),
     save: (settings) => ipcRenderer.invoke('settings:save', settings),
     chooseOutputFolder: () => ipcRenderer.invoke('settings:chooseOutputFolder'),
-    chooseReplaceImage: () => ipcRenderer.invoke('settings:chooseReplaceImage')
+    chooseReplaceImage: () => ipcRenderer.invoke('settings:chooseReplaceImage'),
+    chooseOverlayImage: () => ipcRenderer.invoke('settings:chooseOverlayImage')
   },
   fs: {
     readImageAsDataUrl: (filePath) => ipcRenderer.invoke('fs:readImageAsDataUrl', filePath)
@@ -29,7 +30,9 @@ contextBridge.exposeInMainWorld('bassengfoto', {
     isOpen: () => ipcRenderer.invoke('display:isOpen'),
     sendFrame: (dataUrl) => ipcRenderer.send('display:frame', dataUrl),
     sendCaptured: (payload) => ipcRenderer.send('display:captured', payload),
+    setOverlay: (dataUrl) => ipcRenderer.send('display:overlay', dataUrl),
     onFrame: (callback) => ipcRenderer.on('display:frame', (_event, dataUrl) => callback(dataUrl)),
-    onCaptured: (callback) => ipcRenderer.on('display:captured', (_event, payload) => callback(payload))
+    onCaptured: (callback) => ipcRenderer.on('display:captured', (_event, payload) => callback(payload)),
+    onOverlay: (callback) => ipcRenderer.on('display:overlay', (_event, dataUrl) => callback(dataUrl))
   }
 });

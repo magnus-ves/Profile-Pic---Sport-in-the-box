@@ -3,6 +3,7 @@
 const liveCanvas = document.getElementById('live-canvas');
 const liveCtx = liveCanvas.getContext('2d');
 const capturedFrame = document.getElementById('captured-frame');
+const overlayFrame = document.getElementById('overlay-frame');
 const idleMsg = document.getElementById('idle-msg');
 const nameBanner = document.getElementById('name-banner');
 
@@ -64,6 +65,16 @@ window.bassengfoto.display.onFrame(({ dataUrl, crop }) => {
   liveCanvas.hidden = false;
   latestCrop = crop;
   bufferImg.src = dataUrl;
+});
+
+window.bassengfoto.display.onOverlay((dataUrl) => {
+  if (!dataUrl) {
+    overlayFrame.hidden = true;
+    overlayFrame.src = '';
+    return;
+  }
+  overlayFrame.src = dataUrl;
+  overlayFrame.hidden = false;
 });
 
 window.bassengfoto.display.onCaptured(({ dataUrl, athleteName }) => {

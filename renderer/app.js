@@ -17,7 +17,8 @@ const state = {
   dragStart: null,
   replaceImageEl: null,
   animationHandle: null,
-  lastDisplayFrameSentAt: 0
+  lastDisplayFrameSentAt: 0,
+  displayOverlayDataUrl: null
 };
 
 const FILENAME_FORMATS = {
@@ -397,6 +398,30 @@ function initSettingsPanel() {
     state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
     applyTheme(state.settings.theme);
     await saveSettings();
+  });
+
+  const overlayPathEl = document.getElementById('settings-overlay-path');
+  function refreshOverlayUI() {
+    const p = state.settings.displayOverlayImagePath;
+    overlayPathEl.textContent = p || 'Ingen valgt';
+  }
+  refreshOverlayUI();
+
+  document.getElementById('btn-choose-overlay-image').addEventListener('click', async () => {
+    const filePath = await window.bassengfoto.settings.chooseOverlayImage();
+    if (filePath) {
+      state.settings.displayOverlayImagePath = filePath;
+      await saveSettings();
+      refreshOverlayUI();
+      await loadDisplayOverlay();
+    }
+  });
+
+  document.getElementById('btn-clear-overlay-image').addEventListener('click', async () => {
+    state.settings.displayOverlayImagePath = null;
+    await saveSettings();
+    refreshOverlayUI();
+    await loadDisplayOverlay();
   });
 }
 
@@ -875,9 +900,25 @@ function initCapture() {
 // ---------------------------------------------------------------------------
 // Visningsskjerm (eksternt vindu for eksternt display)
 // ---------------------------------------------------------------------------
+async function loadDisplayOverlay() {
+  const filePath = state.settings.displayOverlayImagePath;
+  if (!filePath) {
+    state.displayOverlayDataUrl = null;
+    window.bassengfoto.display.setOverlay(null);
+    return;
+  }
+  const dataUrl = await window.bassengfoto.fs.readImageAsDataUrl(filePath);
+  state.displayOverlayDataUrl = dataUrl;
+  window.bassengfoto.display.setOverlay(dataUrl);
+}
+
 function initDisplayWindowButton() {
-  document.getElementById('btn-open-display').addEventListener('click', () => {
-    window.bassengfoto.display.open();
+  document.getElementById('btn-open-display').addEventListener('click', async () => {
+    await window.bassengfoto.display.open();
+    // Visningsvinduet trenger litt tid på å laste før det kan motta overlegget.
+    setTimeout(() => {
+      if (state.displayOverlayDataUrl) window.bassengfoto.display.setOverlay(state.displayOverlayDataUrl);
+    }, 500);
   });
 }
 
@@ -897,6 +938,7 @@ async function init() {
   initChromaControls();
   initCapture();
   initDisplayWindowButton();
+  await loadDisplayOverlay();
   renderAthleteList();
   updateFilenamePreview();
 

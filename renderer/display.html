@@ -26,7 +26,19 @@
     inset: 0;
     width: 100%;
     height: 100%;
+    z-index: 1;
   }
+
+  #overlay-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    z-index: 4;
+  }
+  #overlay-frame[hidden] { display: none; }
 
   #idle-msg {
     position: absolute;
@@ -59,6 +71,7 @@
       linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
     background-size: 40px 40px;
     background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+    z-index: 3;
   }
   #captured-frame.show {
     opacity: 1;
@@ -121,6 +134,7 @@
   <div id="stage">
     <div id="idle-msg">Venter på kameraforhåndsvisning fra Bassengfoto…</div>
     <canvas id="live-canvas" hidden></canvas>
+    <img id="overlay-frame" hidden />
     <img id="captured-frame" />
     <div id="live-label"><span class="dot"></span> Live</div>
     <div id="name-banner"></div>

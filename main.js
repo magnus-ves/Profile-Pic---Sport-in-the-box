@@ -20,7 +20,8 @@ const DEFAULT_SETTINGS = {
     replaceColor: '#ffffff',
     replaceImagePath: null
   },
-  imageSize: 700
+  imageSize: 700,
+  displayOverlayImagePath: null
 };
 
 function ensureUserDataDir() {
@@ -134,6 +135,16 @@ ipcMain.handle('settings:chooseReplaceImage', async () => {
   return result.filePaths[0];
 });
 
+ipcMain.handle('settings:chooseOverlayImage', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: 'Velg overleggsbilde for visningsskjerm (bør ha gjennomsiktighet)',
+    filters: [{ name: 'Bilder', extensions: ['png', 'jpg', 'jpeg'] }],
+    properties: ['openFile']
+  });
+  if (result.canceled || result.filePaths.length === 0) return null;
+  return result.filePaths[0];
+});
+
 ipcMain.handle('fs:readImageAsDataUrl', (event, filePath) => {
   try {
     const buf = fs.readFileSync(filePath);
@@ -217,5 +228,11 @@ ipcMain.on('display:frame', (event, dataUrl) => {
 ipcMain.on('display:captured', (event, payload) => {
   if (displayWindow && !displayWindow.isDestroyed()) {
     displayWindow.webContents.send('display:captured', payload);
+  }
+});
+
+ipcMain.on('display:overlay', (event, dataUrl) => {
+  if (displayWindow && !displayWindow.isDestroyed()) {
+    displayWindow.webContents.send('display:overlay', dataUrl);
   }
 });
