@@ -926,6 +926,9 @@ function initDisplayWindowButton() {
 // Init
 // ---------------------------------------------------------------------------
 async function init() {
+  if (window.bassengfoto.platform === 'darwin') {
+    document.getElementById('app').classList.add('platform-mac');
+  }
   await loadAll();
   resizePreviewCanvas();
   initTabs();

@@ -73,6 +73,8 @@ function createDisplayWindow() {
 }
 
 function createWindow() {
+  const isMac = process.platform === 'darwin';
+
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
@@ -80,6 +82,12 @@ function createWindow() {
     minHeight: 700,
     title: 'Bassengfoto',
     backgroundColor: '#1b1f24',
+    ...(isMac
+      ? {
+          titleBarStyle: 'hiddenInset',
+          trafficLightPosition: { x: 16, y: 16 }
+        }
+      : {}),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
