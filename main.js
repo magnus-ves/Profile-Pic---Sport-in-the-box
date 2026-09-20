@@ -7,7 +7,6 @@ const ATHLETES_FILE = () => path.join(USER_DATA_DIR(), 'athletes.json');
 const SETTINGS_FILE = () => path.join(USER_DATA_DIR(), 'settings.json');
 
 const DEFAULT_SETTINGS = {
-  theme: 'light',
   outputFolder: null,
   filenameFormat: 'country_license',
   lastCameraId: null,

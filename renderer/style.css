@@ -14,22 +14,6 @@
   --shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-.theme-dark {
-  --bg: #14171a;
-  --panel-bg: #1e2227;
-  --text: #eef1f4;
-  --text-muted: #9aa4ae;
-  --border: #333a41;
-  --accent: #7999b1;
-  --accent-hover: #86a3b9;
-  --danger: #e5584a;
-  --warning-bg: #4a3d10;
-  --warning-text: #ffd873;
-  --pill-bg: #262b31;
-  --input-bg: #262b31;
-  --shadow: 0 1px 3px rgba(0,0,0,0.4);
-}
-
 * { box-sizing: border-box; }
 
 html, body {
@@ -73,7 +57,6 @@ html, body {
   display: block;
 }
 .brand-logo-left { height: 22px; }
-.theme-dark .brand-logo { filter: brightness(1.5) saturate(1.15); }
 
 .tabs {
   display: flex;
@@ -113,18 +96,6 @@ html, body {
   font-size: 12px;
   color: var(--text-muted);
 }
-
-.icon-btn {
-  background: var(--pill-bg);
-  border: none;
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: background 0.15s ease;
-}
-.icon-btn:hover { background: var(--border); }
 
 .layout {
   flex: 1;
@@ -325,7 +296,6 @@ html, body {
   color: #155724;
   font-size: 13px;
 }
-.theme-dark .save-confirmation { background: #17351f; color: #7be3a0; }
 
 .crop-controls {
   margin-top: 16px;

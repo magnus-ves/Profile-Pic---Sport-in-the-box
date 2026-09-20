@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div id="app" class="theme-light">
+<div id="app">
 
   <header class="topbar">
     <img class="brand-logo brand-logo-left" src="assets/logo.png" alt="Konsopt" />
@@ -17,8 +17,7 @@
     </nav>
     <div class="topbar-actions">
       <span id="output-folder-indicator" class="pill">Ingen mappe valgt</span>
-      <button id="btn-open-display" class="btn small">🖥️ Åpne visningsskjerm</button>
-      <button id="theme-toggle" class="icon-btn" title="Bytt lys/mørk modus">🌙</button>
+      <button id="btn-open-display" class="btn small">Åpne visningsskjerm</button>
     </div>
   </header>
 
@@ -75,9 +74,9 @@
             <div class="selected-athlete-box">
               <div id="selected-athlete-name">Ingen utøver valgt</div>
               <div id="filename-preview" class="filename-preview"></div>
-              <div id="missing-field-warning" class="warning hidden">⚠ Mangler felt for valgt filnavn-format</div>
+              <div id="missing-field-warning" class="warning hidden">Mangler felt for valgt filnavn-format</div>
             </div>
-            <button id="btn-capture" class="btn big primary">📸 Ta bilde (mellomrom)</button>
+            <button id="btn-capture" class="btn big primary">Ta bilde (mellomrom)</button>
             <div id="save-confirmation" class="save-confirmation hidden"></div>
           </div>
         </div>
@@ -92,7 +91,7 @@
         <div id="chroma-controls" class="chroma-controls hidden">
           <h3>Grønnskjerm-innstillinger</h3>
           <div class="chroma-row">
-            <button id="btn-pick-color" class="btn small">🎯 Plukk farge fra bilde</button>
+            <button id="btn-pick-color" class="btn small">Plukk farge fra bilde</button>
             <span class="color-swatch" id="key-color-swatch"></span>
             <label>Toleranse:
               <input type="range" id="tolerance-slider" min="0" max="150" value="40" />
@@ -162,12 +161,6 @@
             <button id="btn-choose-overlay-image" class="btn small">Velg bilde...</button>
             <button id="btn-clear-overlay-image" class="btn small">Fjern</button>
           </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Utseende</legend>
-          <label><input type="radio" name="theme" value="light" id="theme-light-radio" /> Lys modus</label>
-          <label><input type="radio" name="theme" value="dark" id="theme-dark-radio" /> Mørk modus</label>
         </fieldset>
 
         <fieldset>

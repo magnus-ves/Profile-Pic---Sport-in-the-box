@@ -126,7 +126,6 @@ function parseCsvText(text) {
 async function loadAll() {
   state.settings = await window.bassengfoto.settings.load();
   state.athletes = await window.bassengfoto.athletes.load();
-  applyTheme(state.settings.theme);
 }
 
 async function saveSettings() {
@@ -135,22 +134,6 @@ async function saveSettings() {
 
 async function saveAthletes() {
   await window.bassengfoto.athletes.save(state.athletes);
-}
-
-// ---------------------------------------------------------------------------
-// Theme
-// ---------------------------------------------------------------------------
-function applyTheme(theme) {
-  const app = document.getElementById('app');
-  app.classList.remove('theme-light', 'theme-dark');
-  app.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
-  document.getElementById('theme-toggle').textContent = theme === 'dark' ? '☀️' : '🌙';
-  const lightRadio = document.getElementById('theme-light-radio');
-  const darkRadio = document.getElementById('theme-dark-radio');
-  if (lightRadio && darkRadio) {
-    lightRadio.checked = theme !== 'dark';
-    darkRadio.checked = theme === 'dark';
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -238,7 +221,7 @@ function updateFilenamePreview() {
   const { fileName, missing } = buildFilename(athlete, state.settings.filenameFormat);
   previewEl.textContent = fileName;
   if (missing.length > 0) {
-    warningEl.textContent = `⚠ Mangler felt for valgt filnavn-format: ${missing.map(fieldLabel).join(', ')}`;
+    warningEl.textContent = `Mangler felt for valgt filnavn-format: ${missing.map(fieldLabel).join(', ')}`;
     warningEl.classList.remove('hidden');
   } else {
     warningEl.classList.add('hidden');
@@ -338,7 +321,7 @@ function initSettingsPanel() {
   function refreshFolderUI() {
     const folder = state.settings.outputFolder;
     outputFolderEl.textContent = folder || 'Ingen mappe valgt';
-    indicatorEl.textContent = folder ? '📁 ' + folder.split(/[\\/]/).pop() : 'Ingen mappe valgt';
+    indicatorEl.textContent = folder ? folder.split(/[\\/]/).pop() : 'Ingen mappe valgt';
   }
   refreshFolderUI();
 
@@ -381,23 +364,6 @@ function initSettingsPanel() {
     state.settings.imageSize = parseInt(sizeSelect.value, 10);
     await saveSettings();
     resizePreviewCanvas();
-  });
-
-  document.getElementById('theme-light-radio').addEventListener('change', async () => {
-    state.settings.theme = 'light';
-    applyTheme('light');
-    await saveSettings();
-  });
-  document.getElementById('theme-dark-radio').addEventListener('change', async () => {
-    state.settings.theme = 'dark';
-    applyTheme('dark');
-    await saveSettings();
-  });
-
-  document.getElementById('theme-toggle').addEventListener('click', async () => {
-    state.settings.theme = state.settings.theme === 'dark' ? 'light' : 'dark';
-    applyTheme(state.settings.theme);
-    await saveSettings();
   });
 
   const overlayPathEl = document.getElementById('settings-overlay-path');
@@ -840,19 +806,19 @@ async function captureAndSave() {
       athlete.lastPhotoAt = new Date().toISOString();
       await saveAthletes();
       renderAthleteList();
-      showSaveConfirmation(`✔ Lagret: ${fileName}`, false);
+      showSaveConfirmation(`Lagret: ${fileName}`, false);
       window.bassengfoto.display.sendCaptured({
         dataUrl: canvas.toDataURL('image/png'),
         athleteName: athlete.name
       });
     } else {
-      showSaveConfirmation(`✖ Feil: ${result.error}`, true);
+      showSaveConfirmation(`Feil: ${result.error}`, true);
     }
   };
 
   const check = await window.bassengfoto.image.checkExists(fileName);
   if (check.error) {
-    showSaveConfirmation(`✖ ${check.error}`, true);
+    showSaveConfirmation(check.error, true);
     return;
   }
   if (check.exists) {
