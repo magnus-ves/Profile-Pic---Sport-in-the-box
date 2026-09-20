@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Bassengfoto (demo)</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  .demo-banner {
+    background: #7a5b00;
+    color: #fff3cd;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-align: center;
+    padding: 6px 10px;
+  }
+  .demo-banner a { color: #fff; text-decoration: underline; }
+  .brand-logo-text { font-size: 16px; letter-spacing: -0.02em; }
+  #app { height: calc(100vh - 30px); }
+  @media (max-width: 900px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; max-height: 280px; }
+    .camera-main { flex-direction: column; align-items: center; }
+    .camera-stage { width: 100%; max-width: 560px; height: 320px; }
+  }
+</style>
+</head>
+<body>
+<div class="demo-banner">
+  Nettleser-demo av Bassengfoto — viser hvordan appen fungerer. Bilder lastes ned lokalt i stedet for å lagres i en delt mappe.
+</div>
+<div id="app">
+
+  <header class="topbar">
+    <strong class="brand-logo-text">Bassengfoto</strong>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="kamera">Kamera</button>
+      <button class="tab-btn" data-tab="innstillinger">Innstillinger</button>
+    </nav>
+    <div class="topbar-actions">
+      <span id="output-folder-indicator" class="pill">Nedlastingsmappe (nettleser)</span>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <!-- SIDEPANEL: UTØVERLISTE -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Utøvere</h2>
+        <div class="sidebar-buttons">
+          <button id="btn-import-csv" class="btn small">Importer CSV</button>
+          <button id="btn-paste-csv" class="btn small">Lim inn liste</button>
+          <button id="btn-add-athlete" class="btn small primary">+ Legg til</button>
+        </div>
+      </div>
+
+      <input id="search-athletes" type="text" placeholder="Søk navn, klubb, land, ID..." class="search-input" />
+
+      <div class="filter-row">
+        <label><input type="checkbox" id="filter-not-photographed" /> Kun ikke fotografert</label>
+      </div>
+
+      <ul id="athlete-list" class="athlete-list"></ul>
+
+      <div class="sidebar-footer">
+        <span id="athlete-count">0 utøvere</span>
+      </div>
+    </aside>
+
+    <!-- HOVEDOMRÅDE: KAMERA / BESKJÆRING -->
+    <section id="tab-kamera" class="content tab-panel active">
+      <div class="camera-panel">
+
+        <div class="camera-toolbar">
+          <label>Kamera:
+            <select id="camera-select"></select>
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" id="chroma-toggle" /> Grønnskjerm-modus
+          </label>
+          <button id="btn-refresh-cameras" class="btn small">Oppdater kameraer</button>
+        </div>
+
+        <div class="camera-main">
+          <div class="camera-stage" id="camera-stage">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="crop-overlay"></canvas>
+            <div id="no-camera-msg" class="no-camera-msg">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M2 7a2 2 0 0 1 2-2h2.5l1-1.5h5l1 1.5H16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7Z" />
+                <circle cx="10" cy="12" r="3.2" />
+                <path d="M20 9l3-1.6v9.2L20 15" />
+                <path d="M2 2l20 20" stroke-width="1.5" />
+              </svg>
+              <span>Ingen kamera funnet, eller tilgang ikke godkjent.<br />Trykk «Oppdater kameraer» og godkjenn kameratilgang.</span>
+            </div>
+          </div>
+
+          <div class="preview-stage">
+            <h3>Forhåndsvisning (beskåret)</h3>
+            <canvas id="preview-canvas" width="500" height="500"></canvas>
+            <div class="selected-athlete-box">
+              <div id="selected-athlete-name">Ingen utøver valgt</div>
+              <div id="filename-preview" class="filename-preview"></div>
+              <div id="missing-field-warning" class="warning hidden">Mangler felt for valgt filnavn-format</div>
+            </div>
+            <button id="btn-capture" class="btn big primary">Ta bilde (mellomrom)</button>
+            <div id="save-confirmation" class="save-confirmation hidden"></div>
+          </div>
+        </div>
+
+        <div class="crop-controls">
+          <label>Zoom:
+            <input type="range" id="zoom-slider" min="100" max="400" value="100" />
+          </label>
+          <span class="hint">Dra i det kvadratiske rasteret på kameraforhåndsvisningen for å flytte utsnittet (fungerer med finger på iPad).</span>
+        </div>
+
+        <div id="chroma-controls" class="chroma-controls hidden">
+          <h3>Grønnskjerm-innstillinger</h3>
+          <div class="chroma-row">
+            <button id="btn-pick-color" class="btn small">Plukk farge fra bilde</button>
+            <span class="color-swatch" id="key-color-swatch"></span>
+            <label>Toleranse:
+              <input type="range" id="tolerance-slider" min="0" max="150" value="40" />
+            </label>
+            <label>Kant-utjevning:
+              <input type="range" id="feather-slider" min="0" max="60" value="12" />
+            </label>
+          </div>
+          <div class="chroma-row">
+            <label>Erstatning:
+              <select id="chroma-mode-select">
+                <option value="transparent">Transparent (PNG)</option>
+                <option value="color">Bakgrunnsfarge</option>
+                <option value="image">Bakgrunnsbilde</option>
+              </select>
+            </label>
+            <input type="color" id="replace-color-input" value="#ffffff" />
+            <button id="btn-choose-bg-image" class="btn small hidden">Velg bilde...</button>
+            <input type="file" id="bg-image-file" accept="image/*" class="hidden" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INNSTILLINGER -->
+    <section id="tab-innstillinger" class="content tab-panel">
+      <div class="settings-panel">
+        <h2>Innstillinger</h2>
+
+        <fieldset>
+          <legend>Lagring</legend>
+          <p>I denne nettleser-demoen lastes bilder ned til enhetens vanlige nedlastingsmappe
+             i stedet for å skrives direkte til en output-mappe (det krever installert app med
+             filsystemtilgang, som i skrivebordsversjonen).</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Filnavn-format</legend>
+          <select id="filename-format-select">
+            <option value="country_license">[country_short]_[license] → NOR_AA0000</option>
+            <option value="country_id">[country_short]_[id] → NOR_199</option>
+            <option value="club_name">[club_name]_[name] → Bergen_SK_Jane_Doe</option>
+            <option value="license">[license] → AA0000</option>
+            <option value="id">[id] → 199</option>
+          </select>
+          <div>Eksempel: <strong id="filename-format-example">-</strong></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Bildestørrelse</legend>
+          <label>Størrelse (px):
+            <select id="image-size-select">
+              <option value="600">600 x 600</option>
+              <option value="700" selected>700 x 700</option>
+              <option value="800">800 x 800</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Om</legend>
+          <p>Bassengfoto (nettleser-demo) — viser funksjonene i skrivebordsappen for profilbilder
+             til Sport In The Box. Data lagres kun lokalt i denne nettleseren.</p>
+        </fieldset>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL: Legg til utøver -->
+<div id="modal-add-athlete" class="modal hidden">
+  <div class="modal-box">
+    <h3>Legg til utøver</h3>
+    <label>Navn <input type="text" id="add-name" /></label>
+    <label>Land (kort kode) <input type="text" id="add-country" placeholder="NOR" /></label>
+    <label>Klubb <input type="text" id="add-club" /></label>
+    <label>Lisens <input type="text" id="add-license" /></label>
+    <label>ID <input type="text" id="add-id" /></label>
+    <div class="modal-actions">
+      <button id="btn-cancel-add" class="btn">Avbryt</button>
+      <button id="btn-save-add" class="btn primary">Lagre</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Lim inn CSV -->
+<div id="modal-paste-csv" class="modal hidden">
+  <div class="modal-box wide">
+    <h3>Lim inn utøverliste</h3>
+    <p class="hint">Kolonner: Navn, Land, Klubb, Lisens, ID. Komma, semikolon eller tab som skilletegn. Overskriftsrad er valgfritt.</p>
+    <textarea id="paste-textarea" rows="12" placeholder="Navn;Land;Klubb;Lisens;ID"></textarea>
+    <input type="file" id="csv-file-input" accept=".csv,.txt,.tsv" class="hidden" />
+    <div class="modal-actions">
+      <button id="btn-cancel-paste" class="btn">Avbryt</button>
+      <button id="btn-save-paste" class="btn primary">Importer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Bekreft overskriving -->
+<div id="modal-confirm-overwrite" class="modal hidden">
+  <div class="modal-box">
+    <h3>Bildet finnes allerede</h3>
+    <p id="overwrite-message"></p>
+    <div class="modal-actions">
+      <button id="btn-cancel-overwrite" class="btn">Avbryt</button>
+      <button id="btn-confirm-overwrite" class="btn danger">Last ned på nytt</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
