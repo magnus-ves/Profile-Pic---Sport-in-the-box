@@ -44,6 +44,8 @@ html, body {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  color: var(--text);
+  background: var(--bg);
 }
 
 .topbar {
