@@ -69,6 +69,15 @@ html, body {
 
 .brand { font-weight: 700; font-size: 18px; }
 
+.brand-logo {
+  height: 20px;
+  width: auto;
+  display: block;
+  filter: brightness(0) saturate(100%);
+  opacity: 0.85;
+}
+.theme-dark .brand-logo { filter: none; }
+
 .tabs {
   display: flex;
   gap: 2px;
