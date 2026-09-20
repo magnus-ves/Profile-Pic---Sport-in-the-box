@@ -82,6 +82,7 @@ function createWindow() {
     minHeight: 700,
     title: 'Bassengfoto',
     backgroundColor: '#1b1f24',
+    icon: path.join(__dirname, 'build', 'icon.png'),
     ...(isMac
       ? {
           titleBarStyle: 'hiddenInset',

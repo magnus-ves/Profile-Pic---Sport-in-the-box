@@ -1,6 +1,6 @@
-Legg ikonfiler her før du bygger installasjonsprogrammer:
+`icon.png` (1024x1024, med Konsopt-logoen) brukes som kilde for app-ikonet.
+`electron-builder` genererer automatisk `.ico` (Windows) og `.icns` (Mac) fra
+denne filen ved bygging — ingen manuell konvertering nødvendig.
 
-- `icon.ico` — Windows-ikon (256x256 anbefalt)
-- `icon.icns` — Mac-ikon
-
-Uten disse filene vil `electron-builder` bruke standard Electron-ikon.
+Vil du bytte ikon, erstatt `icon.png` med et nytt kvadratisk bilde
+(helst 1024x1024).
