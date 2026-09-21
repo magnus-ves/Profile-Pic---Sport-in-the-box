@@ -134,12 +134,14 @@
   <div id="stage">
     <div id="idle-msg">Venter på kameraforhåndsvisning fra Bassengfoto…</div>
     <canvas id="live-canvas" hidden></canvas>
+    <video id="local-video" autoplay playsinline muted hidden></video>
     <img id="overlay-frame" hidden />
     <img id="captured-frame" />
     <div id="live-label"><span class="dot"></span> Live</div>
     <div id="name-banner"></div>
     <div id="fullscreen-hint">Dobbeltklikk for fullskjerm</div>
   </div>
+  <script src="chroma-shared.js"></script>
   <script src="display.js"></script>
 </body>
 </html>

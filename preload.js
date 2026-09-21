@@ -32,8 +32,10 @@ contextBridge.exposeInMainWorld('bassengfoto', {
     sendFrame: (dataUrl) => ipcRenderer.send('display:frame', dataUrl),
     sendCaptured: (payload) => ipcRenderer.send('display:captured', payload),
     setOverlay: (dataUrl) => ipcRenderer.send('display:overlay', dataUrl),
+    setCameraConfig: (config) => ipcRenderer.send('display:cameraConfig', config),
     onFrame: (callback) => ipcRenderer.on('display:frame', (_event, dataUrl) => callback(dataUrl)),
     onCaptured: (callback) => ipcRenderer.on('display:captured', (_event, payload) => callback(payload)),
-    onOverlay: (callback) => ipcRenderer.on('display:overlay', (_event, dataUrl) => callback(dataUrl))
+    onOverlay: (callback) => ipcRenderer.on('display:overlay', (_event, dataUrl) => callback(dataUrl)),
+    onCameraConfig: (callback) => ipcRenderer.on('display:cameraConfig', (_event, config) => callback(config))
   }
 });

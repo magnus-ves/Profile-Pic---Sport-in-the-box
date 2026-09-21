@@ -477,6 +477,7 @@ async function startCamera(deviceId) {
       const match = state.videoDevices.find((d) => d.deviceId === opt.value);
       if (match && match.label) opt.textContent = match.label;
     });
+    pushDisplayCameraConfig();
   } catch (err) {
     console.error('Kunne ikke starte kamera', err);
     document.getElementById('no-camera-msg').classList.add('show');
@@ -565,6 +566,7 @@ function initCropInteraction() {
     state.crop.cx = clamp(state.crop.cx + dx / rect.dispW, 0.05, 0.95);
     state.crop.cy = clamp(state.crop.cy + dy / rect.dispH, 0.05, 0.95);
     drawCropOverlay();
+    pushDisplayCameraConfig();
   });
   window.addEventListener('mouseup', () => (state.dragging = false));
 
@@ -572,6 +574,7 @@ function initCropInteraction() {
     state.zoom = parseInt(e.target.value, 10);
     state.crop.size = clamp(100 / state.zoom, 0.15, 1.0);
     drawCropOverlay();
+    pushDisplayCameraConfig();
   });
 
   window.addEventListener('resize', drawCropOverlay);
@@ -654,7 +657,7 @@ function compositeOntoDisplayBackground(imageData) {
     return imageData;
   }
 
-  const { width, height, data } = imageData;
+  const { width, height } = imageData;
   if (!displayChromaBgCanvas) displayChromaBgCanvas = document.createElement('canvas');
   if (displayChromaBgCanvas.width !== width || displayChromaBgCanvas.height !== height) {
     displayChromaBgCanvas.width = width;
@@ -662,26 +665,9 @@ function compositeOntoDisplayBackground(imageData) {
   }
   const bgCtx = displayChromaBgCanvas.getContext('2d');
   bgCtx.drawImage(displayChromaBgEl, 0, 0, width, height);
-  const bgData = bgCtx.getImageData(0, 0, width, height).data;
+  const bgImageData = bgCtx.getImageData(0, 0, width, height);
 
-  const { r: kr, g: kg, b: kb } = chromaKey.keyColor;
-  const tol = chromaKey.tolerance;
-  const feather = Math.max(chromaKey.feather, 1);
-
-  for (let i = 0; i < data.length; i += 4) {
-    const r = data[i], g = data[i + 1], b = data[i + 2];
-    const dist = colorDistance(r, g, b, kr, kg, kb);
-
-    let keyness = 0;
-    if (dist < tol) keyness = 1;
-    else if (dist < tol + feather) keyness = 1 - (dist - tol) / feather;
-    if (keyness <= 0) continue;
-
-    data[i] = r * (1 - keyness) + bgData[i] * keyness;
-    data[i + 1] = g * (1 - keyness) + bgData[i + 1] * keyness;
-    data[i + 2] = b * (1 - keyness) + bgData[i + 2] * keyness;
-  }
-  return imageData;
+  return compositeChromaOntoBackground(imageData, bgImageData, chromaKey.keyColor, chromaKey.tolerance, chromaKey.feather);
 }
 
 function initChromaControls() {
@@ -713,15 +699,18 @@ function initChromaControls() {
     state.settings.chromaKey.enabled = toggle.checked;
     controls.classList.toggle('hidden', !toggle.checked);
     await saveSettings();
+    pushDisplayCameraConfig();
   });
 
   toleranceSlider.addEventListener('input', async () => {
     state.settings.chromaKey.tolerance = parseInt(toleranceSlider.value, 10);
     await saveSettings();
+    pushDisplayCameraConfig();
   });
   featherSlider.addEventListener('input', async () => {
     state.settings.chromaKey.feather = parseInt(featherSlider.value, 10);
     await saveSettings();
+    pushDisplayCameraConfig();
   });
   modeSelect.addEventListener('change', async () => {
     state.settings.chromaKey.mode = modeSelect.value;
@@ -758,6 +747,7 @@ function initChromaControls() {
     state.settings.chromaKey.keyColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
     swatch.style.background = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
     await saveSettings();
+    pushDisplayCameraConfig();
   });
 }
 
@@ -954,12 +944,26 @@ async function loadDisplayOverlay() {
   window.bassengfoto.display.setOverlay(dataUrl);
 }
 
+function pushDisplayCameraConfig() {
+  window.bassengfoto.display.setCameraConfig({
+    deviceId: state.settings.lastCameraId || null,
+    crop: { cx: state.crop.cx, cy: state.crop.cy, size: state.crop.size },
+    chromaKey: {
+      enabled: state.settings.chromaKey.enabled,
+      keyColor: state.settings.chromaKey.keyColor,
+      tolerance: state.settings.chromaKey.tolerance,
+      feather: state.settings.chromaKey.feather
+    }
+  });
+}
+
 function initDisplayWindowButton() {
   document.getElementById('btn-open-display').addEventListener('click', async () => {
     await window.bassengfoto.display.open();
-    // Visningsvinduet trenger litt tid på å laste før det kan motta overlegget.
+    // Visningsvinduet trenger litt tid på å laste før det kan motta overlegget/kamerakonfig.
     setTimeout(() => {
       if (state.displayOverlayDataUrl) window.bassengfoto.display.setOverlay(state.displayOverlayDataUrl);
+      pushDisplayCameraConfig();
     }, 500);
   });
 }

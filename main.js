@@ -244,3 +244,9 @@ ipcMain.on('display:overlay', (event, dataUrl) => {
     displayWindow.webContents.send('display:overlay', dataUrl);
   }
 });
+
+ipcMain.on('display:cameraConfig', (event, config) => {
+  if (displayWindow && !displayWindow.isDestroyed()) {
+    displayWindow.webContents.send('display:cameraConfig', config);
+  }
+});
