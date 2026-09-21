@@ -641,6 +641,49 @@ function applyChromaKey(imageData) {
   return imageData;
 }
 
+// ---------------------------------------------------------------------------
+// Grønnskjerm mot fast Konsopt-bakgrunn for visningsskjermen (svømmerens skjerm)
+// ---------------------------------------------------------------------------
+const displayChromaBgEl = new Image();
+displayChromaBgEl.src = 'assets/display-chroma-bg.png';
+let displayChromaBgCanvas = null;
+
+function compositeOntoDisplayBackground(imageData) {
+  const { chromaKey } = state.settings;
+  if (!chromaKey.enabled || !displayChromaBgEl.complete || !displayChromaBgEl.naturalWidth) {
+    return imageData;
+  }
+
+  const { width, height, data } = imageData;
+  if (!displayChromaBgCanvas) displayChromaBgCanvas = document.createElement('canvas');
+  if (displayChromaBgCanvas.width !== width || displayChromaBgCanvas.height !== height) {
+    displayChromaBgCanvas.width = width;
+    displayChromaBgCanvas.height = height;
+  }
+  const bgCtx = displayChromaBgCanvas.getContext('2d');
+  bgCtx.drawImage(displayChromaBgEl, 0, 0, width, height);
+  const bgData = bgCtx.getImageData(0, 0, width, height).data;
+
+  const { r: kr, g: kg, b: kb } = chromaKey.keyColor;
+  const tol = chromaKey.tolerance;
+  const feather = Math.max(chromaKey.feather, 1);
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const dist = colorDistance(r, g, b, kr, kg, kb);
+
+    let keyness = 0;
+    if (dist < tol) keyness = 1;
+    else if (dist < tol + feather) keyness = 1 - (dist - tol) / feather;
+    if (keyness <= 0) continue;
+
+    data[i] = r * (1 - keyness) + bgData[i] * keyness;
+    data[i + 1] = g * (1 - keyness) + bgData[i + 1] * keyness;
+    data[i + 2] = b * (1 - keyness) + bgData[i + 2] * keyness;
+  }
+  return imageData;
+}
+
 function initChromaControls() {
   const toggle = document.getElementById('chroma-toggle');
   const controls = document.getElementById('chroma-controls');
@@ -785,6 +828,12 @@ function renderPreviewFrame() {
       state.lastDisplayFrameSentAt = now;
       const fullFrameCanvas = captureFullFrameCanvas(video);
       if (fullFrameCanvas) {
+        if (state.settings.chromaKey.enabled) {
+          const fullCtx = fullFrameCanvas.getContext('2d');
+          const fullImageData = fullCtx.getImageData(0, 0, fullFrameCanvas.width, fullFrameCanvas.height);
+          compositeOntoDisplayBackground(fullImageData);
+          fullCtx.putImageData(fullImageData, 0, 0);
+        }
         window.bassengfoto.display.sendFrame({
           dataUrl: fullFrameCanvas.toDataURL('image/jpeg', 0.75),
           crop: { cx: state.crop.cx, cy: state.crop.cy, size: state.crop.size }
