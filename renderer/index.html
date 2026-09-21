@@ -128,53 +128,63 @@
       <div class="settings-panel">
         <h2>Innstillinger</h2>
 
-        <fieldset>
-          <legend>Lagringsmappe</legend>
-          <p>Bilder lagres direkte i mappen Sport In The Box leser fra.</p>
-          <div class="row">
-            <span id="settings-output-folder" class="folder-path">Ingen mappe valgt</span>
-            <button id="btn-choose-folder" class="btn small">Velg mappe...</button>
-            <button id="btn-open-folder" class="btn small">Åpne mappe</button>
+        <div class="settings-section">
+          <h3 class="settings-section-title">Lagringsmappe</h3>
+          <div class="settings-card">
+            <p>Bilder lagres direkte i mappen Sport In The Box leser fra.</p>
+            <div class="row">
+              <span id="settings-output-folder" class="folder-path">Ingen mappe valgt</span>
+              <button id="btn-choose-folder" class="btn small">Velg mappe...</button>
+              <button id="btn-open-folder" class="btn small">Åpne mappe</button>
+            </div>
           </div>
-        </fieldset>
+        </div>
 
-        <fieldset>
-          <legend>Filnavn-format</legend>
-          <select id="filename-format-select">
-            <option value="country_license">[country_short]_[license] → NOR_AA0000</option>
-            <option value="country_id">[country_short]_[id] → NOR_199</option>
-            <option value="club_name">[club_name]_[name] → Bergen_SK_Jane_Doe</option>
-            <option value="license">[license] → AA0000</option>
-            <option value="id">[id] → 199</option>
-          </select>
-          <div>Eksempel: <strong id="filename-format-example">-</strong></div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Bildestørrelse</legend>
-          <label>Størrelse (px):
-            <select id="image-size-select">
-              <option value="600">600 x 600</option>
-              <option value="700" selected>700 x 700</option>
-              <option value="800">800 x 800</option>
+        <div class="settings-section">
+          <h3 class="settings-section-title">Filnavn-format</h3>
+          <div class="settings-card">
+            <select id="filename-format-select">
+              <option value="country_license">[country_short]_[license] → NOR_AA0000</option>
+              <option value="country_id">[country_short]_[id] → NOR_199</option>
+              <option value="club_name">[club_name]_[name] → Bergen_SK_Jane_Doe</option>
+              <option value="license">[license] → AA0000</option>
+              <option value="id">[id] → 199</option>
             </select>
-          </label>
-        </fieldset>
-
-        <fieldset>
-          <legend>Visningsskjerm — overlegg</legend>
-          <p class="hint">Valgfritt logo/ramme-bilde som legges oppå kamerabildet på den eksterne visningsskjermen. Bruk en PNG med gjennomsiktighet der kameraet skal vises igjennom.</p>
-          <div class="row">
-            <span id="settings-overlay-path" class="folder-path">Ingen valgt</span>
-            <button id="btn-choose-overlay-image" class="btn small">Velg bilde...</button>
-            <button id="btn-clear-overlay-image" class="btn small">Fjern</button>
+            <div>Eksempel: <strong id="filename-format-example">-</strong></div>
           </div>
-        </fieldset>
+        </div>
 
-        <fieldset>
-          <legend>Om</legend>
-          <p>Bassengfoto v1.0.0 — lokal app for profilbilder til Sport In The Box.</p>
-        </fieldset>
+        <div class="settings-section">
+          <h3 class="settings-section-title">Bildestørrelse</h3>
+          <div class="settings-card">
+            <label>Størrelse (px):
+              <select id="image-size-select">
+                <option value="600">600 x 600</option>
+                <option value="700" selected>700 x 700</option>
+                <option value="800">800 x 800</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="settings-section-title">Visningsskjerm — overlegg</h3>
+          <div class="settings-card">
+            <p class="hint">Valgfritt logo/ramme-bilde som legges oppå kamerabildet på den eksterne visningsskjermen. Bruk en PNG med gjennomsiktighet der kameraet skal vises igjennom.</p>
+            <div class="row">
+              <span id="settings-overlay-path" class="folder-path">Ingen valgt</span>
+              <button id="btn-choose-overlay-image" class="btn small">Velg bilde...</button>
+              <button id="btn-clear-overlay-image" class="btn small">Fjern</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="settings-section-title">Om</h3>
+          <div class="settings-card">
+            <p>Bassengfoto v1.0.0 — lokal app for profilbilder til Sport In The Box.</p>
+          </div>
+        </div>
       </div>
     </section>
 
