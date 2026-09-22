@@ -14,8 +14,10 @@ let hideCapturedTimer = null;
 
 let latestChromaKey = { enabled: false, keyColor: { r: 0, g: 177, b: 64 }, tolerance: 40, feather: 12 };
 let currentDeviceId = null;
+let lastAttemptedDeviceId = undefined; // skiller seg fra enhver ekte deviceId eller null
 let usingLocalCamera = false;
 let localStream = null;
+let cameraAttemptInFlight = false;
 
 const chromaBgEl = new Image();
 chromaBgEl.src = 'assets/display-chroma-bg.png';
@@ -87,6 +89,8 @@ window.bassengfoto.display.onFrame(({ dataUrl, crop }) => {
 // Direkte kameratilgang i dette vinduet — ingen forsinkelse fra IPC/JPEG.
 // ---------------------------------------------------------------------------
 async function startLocalCamera(deviceId) {
+  if (cameraAttemptInFlight) return;
+  cameraAttemptInFlight = true;
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: deviceId ? { deviceId: { exact: deviceId } } : true,
@@ -104,6 +108,8 @@ async function startLocalCamera(deviceId) {
   } catch (err) {
     console.warn('Kunne ikke åpne kamera direkte i visningsvinduet, bruker reservevisning:', err.message);
     usingLocalCamera = false;
+  } finally {
+    cameraAttemptInFlight = false;
   }
 }
 
@@ -153,7 +159,12 @@ window.bassengfoto.display.onCameraConfig(({ deviceId, crop, chromaKey }) => {
   latestCrop = crop || latestCrop;
   if (chromaKey) latestChromaKey = chromaKey;
 
-  if (!usingLocalCamera || deviceId !== currentDeviceId) {
+  // Prøv å åpne kameraet direkte kun én gang per valgt kamera-ID — cameraConfig
+  // sendes ofte (f.eks. for hver pikselbevegelse ved dragging av beskjæringsrammen),
+  // så uten denne sperren ville et mislykket forsøk (kameraet opptatt et annet sted)
+  // spamme nye getUserMedia-kall kontinuerlig og gjøre vinduet ustabilt.
+  if (deviceId !== lastAttemptedDeviceId) {
+    lastAttemptedDeviceId = deviceId;
     startLocalCamera(deviceId);
   }
 });
