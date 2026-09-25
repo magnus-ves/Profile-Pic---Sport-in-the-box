@@ -39,23 +39,54 @@ Vibrasjon (haptikk) og en kort melding bekrefter hver kommando. Tilkoblingsstatu
 > Finn IP-adressen på SIB-PC-en med `ipconfig` i en kommandolinje (IPv4-adresse).
 > REST-API-et må være skrudd på i Sport In The Box.
 
-## Egen app på iPaden (uten Expo Go)
+## Egen app på iPaden via TestFlight
 
-Bygg med [EAS](https://docs.expo.dev/build/introduction/) i skyen. Du trenger ikke Mac eller Xcode,
-men du trenger en Apple Developer-konto.
+Appen bygges i skyen med [EAS](https://docs.expo.dev/build/introduction/) og lastes opp til
+TestFlight. Du trenger ikke Mac eller Xcode, men du trenger en Apple Developer-konto og en
+Expo-konto.
+
+### Første gang (fra din egen PC/Mac, ca. 30 min)
+
+Første bygg må kjøres interaktivt, fordi EAS må logge inn hos Apple for å lage sertifikater
+og app-oppføringen i App Store Connect.
 
 ```bash
-npm install -g eas-cli      # eller bruk npx eas-cli@latest
-eas login
-eas build --platform ios --profile preview      # intern installasjon (ad hoc) på registrerte iPader
-# eller
-eas build --platform ios --profile production   # for TestFlight / App Store
-eas submit --platform ios                       # last opp til TestFlight
+cd sib-app
+npm install
+npx expo install --fix                 # sikrer riktige pakkeversjoner for SDK 57
+npx eas-cli@latest login               # Expo-kontoen
+npx eas-cli@latest init                # lager EAS-prosjektet, skriver projectId i app.json
+npx eas-cli@latest build --platform ios --profile production --auto-submit
 ```
 
-Med `preview` ber EAS deg registrere iPaden (`eas device:create`), og du får en lenke du
-åpner på iPaden for å installere appen. Med `production` + `eas submit` legges appen i
-TestFlight, og den kan installeres derfra.
+Under bygget svarer du på spørsmålene:
+
+- **Logg inn på Apple-kontoen:** ja. Bruk Apple-ID-en som er med i Developer-programmet.
+- **Generer distribusjonssertifikat og provisioning profile:** ja, la EAS håndtere det.
+- **Bundle identifier `no.sibkontroll.app`:** godta, eller bytt i `app.json` hvis den er tatt.
+- Ved innsending: la EAS **opprette appen i App Store Connect**. Er navnet «SIB Kontroll» tatt,
+  endre `name` i `app.json` (f.eks. «SIB Kontroll Arena»).
+
+Bygget tar 15–25 min, og etter opplasting bruker Apple 5–30 min på å behandle det.
+Commit endringen `eas init` gjorde i `app.json` (`extra.eas.projectId` og `owner`).
+
+### Installere på iPadene
+
+1. [App Store Connect](https://appstoreconnect.apple.com) → **Apper** → SIB Kontroll → **TestFlight**.
+2. Under **Intern testing**, lag en gruppe og legg til personene (må være brukere i
+   App Store Connect-teamet, opptil 100). Svar på spørsmålet om eksportsamsvar hvis det kommer.
+   `usesNonExemptEncryption: false` er satt, så det skal normalt ikke dukke opp.
+3. De får e-post, installerer **TestFlight** fra App Store og deretter SIB Kontroll.
+
+Interne TestFlight-bygg må ikke gjennom Apples gjennomgang, men de **utløper etter 90 dager**.
+Bygg en ny versjon før det.
+
+### Senere bygg
+
+Kjør samme kommando igjen (`build --platform ios --profile production --auto-submit`).
+Byggnummeret økes automatisk. Hvis du kobler GitHub-repoet til Expo-prosjektet
+(expo.dev → prosjektet → **GitHub**, base directory `sib-app`), kan nye bygg startes fra
+nettsiden uten din PC.
 
 ## Test uten Sport In The Box
 
