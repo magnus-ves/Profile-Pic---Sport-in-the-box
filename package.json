@@ -11,7 +11,8 @@
     "dev": "electron . --dev",
     "build": "electron-builder",
     "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac"
+    "build:mac": "electron-builder --mac",
+    "sib-kontroll": "node sib-kontroll/server.js"
   },
   "devDependencies": {
     "electron": "^31.0.0",
