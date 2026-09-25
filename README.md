@@ -5,9 +5,12 @@ Skrivebordsapp (Electron) for å ta profilbilder av svømmere til scoreboard-sys
 lagrer bildene direkte i mappen Sport In The Box leser fra — ingen sky eller
 mobil nødvendig.
 
-> **Ny:** [`sib-kontroll/`](sib-kontroll/README.md) er en egen fjernkontroll-app
-> for å styre Sport In The Box (hurtigknapper, rundown, spillelister, streaming)
-> fra nettbrett/mobil via SIB sitt REST-API. Start med `npm run sib-kontroll`.
+> **Ny:** Fjernkontroll for Sport In The Box (hurtigknapper, rundown,
+> spillelister, streaming) via SIB sitt REST-API:
+> - [`sib-app/`](sib-app/README.md): egen iPad-app (Expo/React Native) som
+>   kobler seg direkte til SIB.
+> - [`sib-kontroll/`](sib-kontroll/README.md): nettleserversjon med en liten
+>   server på PC-en (`npm run sib-kontroll`).
 
 ## Funksjoner
 

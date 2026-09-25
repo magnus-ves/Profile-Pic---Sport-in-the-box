@@ -71,6 +71,10 @@ function moveSelection(delta, run) {
 }
 
 http.createServer((req, res) => {
+  // CORS, slik at web-versjonen av Expo-appen (sib-app) kan testes direkte mot mocken.
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
   let parts = new URL(req.url, 'http://x').pathname.split('/').filter(Boolean);
   if (PASSWORD) {
     if (parts[parts.length - 1] !== PASSWORD) { console.log(`401 ${req.method} ${req.url}`); res.writeHead(401); return res.end(); }
